@@ -13,9 +13,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 # Tool directories whose dotfiles are linked into $HOME
 TOOLS="git ruby shell tmux vim"
 
-# Point $HOME/<name> at <src>, backing up a real file that is in the way
+# Point <dest> (default $HOME/<name>) at <src>, backing up a real file that is in the way
 link() {
-  local src="$1" dest="$HOME/$(basename "$1")"
+  local src="$1" dest="${2:-$HOME/$(basename "$1")}"
   if [ -e "$dest" ] && [ ! -L "$dest" ]; then
     mv "$dest" "$dest.backup.$(date +%Y%m%d%H%M%S)"
     echo "backed up $dest"
@@ -38,10 +38,11 @@ ensure_source() {
   fi
 }
 
-# Remove broken links in $HOME that pointed into this repo (or its old bootstrap-rc name)
+# Remove broken links in <dir> (default $HOME dotfiles) that pointed into this repo
+# (or its old bootstrap-rc name)
 remove_dangling_links() {
-  local file target
-  for file in "$HOME"/.[!.]*; do
+  local file target pattern="${1:-$HOME/.[!.]*}"
+  for file in $pattern; do
     [ -L "$file" ] && [ ! -e "$file" ] || continue
     target="$(readlink "$file")"
     case "$target" in
@@ -66,6 +67,15 @@ done
 # Shell
 ensure_source .bash_profile "$DIR/shell/.bash_profile-private"
 ensure_source .bashrc "$DIR/shell/.bashrc-private"
+
+# Claude skills: link each committed skill into ~/.claude/skills, so drafts
+# stay out of use until they are committed
+mkdir -p "$HOME/.claude/skills"
+remove_dangling_links "$HOME/.claude/skills/*"
+git -C "$DIR" ls-files 'claude/skills/*/SKILL.md' | while read -r skill; do
+  name="$(basename "$(dirname "$skill")")"
+  link "$DIR/claude/skills/$name" "$HOME/.claude/skills/$name"
+done
 
 # Vim bundles
 git -C "$DIR" submodule update --init
