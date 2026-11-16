@@ -77,5 +77,12 @@ git -C "$DIR" ls-files 'claude/skills/*/SKILL.md' | while read -r skill; do
   link "$DIR/claude/skills/$name" "$HOME/.claude/skills/$name"
 done
 
+# Codex prompts: link each committed prompt into ~/.codex/prompts
+mkdir -p "$HOME/.codex/prompts"
+remove_dangling_links "$HOME/.codex/prompts/*"
+git -C "$DIR" ls-files 'codex/prompts/*.md' | while read -r prompt; do
+  link "$DIR/$prompt" "$HOME/.codex/prompts/$(basename "$prompt")"
+done
+
 # Vim bundles
 git -C "$DIR" submodule update --init
