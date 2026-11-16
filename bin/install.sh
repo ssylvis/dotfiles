@@ -1,45 +1,60 @@
-#/bin/sh
+#!/usr/bin/env bash
+# Install dotfiles into $HOME. Safe to re-run: existing links are repointed,
+# real files in the way are backed up, and rc source lines are never duplicated.
+set -euo pipefail
 
-# Capture bootstrap-rc dir
+# Repository root, wherever it is cloned
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
-# Install symlinks in user.home
-cd $HOME
+# Point $HOME/<name> at $DIR/<name>, backing up a real file that is in the way
+link() {
+  local src="$DIR/$1" dest="$HOME/$1"
+  if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+    mv "$dest" "$dest.backup.$(date +%Y%m%d%H%M%S)"
+    echo "backed up $dest"
+  fi
+  ln -sfn "$src" "$dest"
+}
 
-# Link aliases
-for alias in `ls $DIR/.*_alias`; do
-  ln -s $alias
+# Make <rc file> source $DIR/<private file> exactly once, repointing an old path if present
+ensure_source() {
+  local rc="$HOME/$1" private="$2"
+  local line="source $DIR/$private"
+  touch "$rc"
+  if grep -qxF "$line" "$rc"; then
+    return
+  elif grep -qE "^source .*/$private\$" "$rc"; then
+    sed -i.bak -E "s#^source .*/$private\$#$line#" "$rc" && rm "$rc.bak"
+  else
+    printf '\n# Link to personal\n%s\n' "$line" >> "$rc"
+  fi
+}
+
+# Remove links in $HOME whose target no longer exists (e.g. a deleted alias file)
+remove_dangling_alias_links() {
+  local file
+  for file in "$HOME"/.*_alias; do
+    if [ -L "$file" ] && [ ! -e "$file" ]; then
+      rm "$file"
+      echo "removed dangling $file"
+    fi
+  done
+}
+
+# Aliases
+remove_dangling_alias_links
+for alias in "$DIR"/.*_alias; do
+  link "$(basename "$alias")"
 done
 
-# bash_profile
-cat <<EOT >> .bash_profile
-# Link to personal
-source $DIR/.bash_profile-private
-EOT
+# Shell
+ensure_source .bash_profile .bash_profile-private
+ensure_source .bashrc .bashrc-private
 
-# bashrc
-cat <<EOT >> .bashrc
-# Link to personal
-source $DIR/.bashrc-private
-EOT
+# Git, input, ruby, tmux, vim
+for file in .gitconfig .inputrc .irbrc .pryrc .tmux.conf .ackrc .vim .vimrc; do
+  link "$file"
+done
 
-# git
-ln -s $DIR/.gitconfig
-
-# input
-ln -s $DIR/.inputrc
-
-# ruby
-ln -s $DIR/.irbrc
-ln -s $DIR/.pryrc
-
-# tmux
-ln -s $DIR/.tmux.conf
-
-# vim
-ln -s $DIR/.ackrc
-ln -s $DIR/.vim
-ln -s $DIR/.vimrc
-
-# Initialize the various children bundles
-cd $DIR && git submodule init && git submodule update
+# Vim bundles
+git -C "$DIR" submodule update --init

@@ -10,9 +10,9 @@ export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 export INPUTRC=~/.inputrc
 export PATH=${PATH}:~/bin
 
-# Add bash completion
-for file in `ls ${HOME}/bootstrap-rc/profile.d/*.sh`; do
-  source $file
+# Add bash completion from this repo's profile.d, wherever it is cloned
+for file in "$(dirname "${BASH_SOURCE[0]}")"/profile.d/*.sh; do
+  source "$file"
 done
 
 # Alias hub, if installed
