@@ -1,14 +1,21 @@
 #!/usr/bin/env bash
 # Install dotfiles into $HOME. Safe to re-run: existing links are repointed,
 # real files in the way are backed up, and rc source lines are never duplicated.
+#
+# Each tool directory holds files named as they appear in $HOME
+# (e.g. git/.gitconfig -> ~/.gitconfig). shell/*-private files are sourced
+# from ~/.bashrc and ~/.bash_profile rather than linked.
 set -euo pipefail
 
 # Repository root, wherever it is cloned
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
-# Point $HOME/<name> at $DIR/<name>, backing up a real file that is in the way
+# Tool directories whose dotfiles are linked into $HOME
+TOOLS="git ruby shell tmux vim"
+
+# Point $HOME/<name> at <src>, backing up a real file that is in the way
 link() {
-  local src="$DIR/$1" dest="$HOME/$1"
+  local src="$1" dest="$HOME/$(basename "$1")"
   if [ -e "$dest" ] && [ ! -L "$dest" ]; then
     mv "$dest" "$dest.backup.$(date +%Y%m%d%H%M%S)"
     echo "backed up $dest"
@@ -16,45 +23,49 @@ link() {
   ln -sfn "$src" "$dest"
 }
 
-# Make <rc file> source $DIR/<private file> exactly once, repointing an old path if present
+# Make <rc file> source <private file> exactly once, repointing an old path if present
 ensure_source() {
   local rc="$HOME/$1" private="$2"
-  local line="source $DIR/$private"
+  local name; name="$(basename "$private")"
+  local line="source $private"
   touch "$rc"
   if grep -qxF "$line" "$rc"; then
     return
-  elif grep -qE "^source .*/$private\$" "$rc"; then
-    sed -i.bak -E "s#^source .*/$private\$#$line#" "$rc" && rm "$rc.bak"
+  elif grep -qE "^source .*/$name\$" "$rc"; then
+    sed -i.bak -E "s#^source .*/$name\$#$line#" "$rc" && rm "$rc.bak"
   else
     printf '\n# Link to personal\n%s\n' "$line" >> "$rc"
   fi
 }
 
-# Remove links in $HOME whose target no longer exists (e.g. a deleted alias file)
-remove_dangling_alias_links() {
-  local file
-  for file in "$HOME"/.*_alias; do
-    if [ -L "$file" ] && [ ! -e "$file" ]; then
-      rm "$file"
-      echo "removed dangling $file"
-    fi
+# Remove broken links in $HOME that pointed into this repo (or its old bootstrap-rc name)
+remove_dangling_links() {
+  local file target
+  for file in "$HOME"/.[!.]*; do
+    [ -L "$file" ] && [ ! -e "$file" ] || continue
+    target="$(readlink "$file")"
+    case "$target" in
+      "$DIR"/*|*/bootstrap-rc/*) rm "$file" && echo "removed dangling $file" ;;
+    esac
   done
 }
 
-# Aliases
-remove_dangling_alias_links
-for alias in "$DIR"/.*_alias; do
-  link "$(basename "$alias")"
+remove_dangling_links
+
+# Dotfiles from each tool directory
+for tool in $TOOLS; do
+  for file in "$DIR/$tool"/.[!.]*; do
+    [ -e "$file" ] || continue
+    case "$(basename "$file")" in
+      *-private) ;;  # sourced below, not linked
+      *) link "$file" ;;
+    esac
+  done
 done
 
 # Shell
-ensure_source .bash_profile .bash_profile-private
-ensure_source .bashrc .bashrc-private
-
-# Git, input, ruby, tmux, vim
-for file in .gitconfig .inputrc .irbrc .pryrc .tmux.conf .ackrc .vim .vimrc; do
-  link "$file"
-done
+ensure_source .bash_profile "$DIR/shell/.bash_profile-private"
+ensure_source .bashrc "$DIR/shell/.bashrc-private"
 
 # Vim bundles
 git -C "$DIR" submodule update --init

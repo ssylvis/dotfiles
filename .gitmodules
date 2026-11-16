@@ -1,24 +1,24 @@
 [submodule ".vim/bundle/ack.vim"]
-	path = .vim/bundle/ack.vim
+	path = vim/.vim/bundle/ack.vim
 	url = https://github.com/mileszs/ack.vim.git
 [submodule ".vim/bundle/ctrlp.vim"]
-	path = .vim/bundle/ctrlp.vim
+	path = vim/.vim/bundle/ctrlp.vim
 	url = https://github.com/kien/ctrlp.vim.git
 [submodule ".vim/bundle/nerdtree"]
-	path = .vim/bundle/nerdtree
+	path = vim/.vim/bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree.git
 [submodule ".vim/bundle/vim-commentary"]
-	path = .vim/bundle/vim-commentary
+	path = vim/.vim/bundle/vim-commentary
 	url = https://tpope.io/vim/commentary.git
 [submodule ".vim/bundle/vim-coffee-script"]
-	path = .vim/bundle/vim-coffee-script
+	path = vim/.vim/bundle/vim-coffee-script
 	url = https://github.com/kchmck/vim-coffee-script.git
 [submodule ".vim/bundle/vim-haml"]
-	path = .vim/bundle/vim-haml
+	path = vim/.vim/bundle/vim-haml
 	url = https://github.com/tpope/vim-haml.git
 [submodule ".vim/bundle/indentLine"]
-	path = .vim/bundle/indentLine
+	path = vim/.vim/bundle/indentLine
 	url = https://github.com/Yggdroot/indentLine
 [submodule ".vim/bundle/vim-colors-solarized"]
-	path = .vim/bundle/vim-colors-solarized
+	path = vim/.vim/bundle/vim-colors-solarized
 	url = https://github.com/altercation/vim-colors-solarized.git

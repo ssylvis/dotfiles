@@ -1,16 +1,32 @@
-# bootstrap-rc
-Resource configuration files for a new workstation.
+# dotfiles
+Configuration files for a new workstation.
 
 ## Installation
-    # Clone the bootstrap-rc repository in current directory
-    git clone https://github.com/ssylvis/bootstrap-rc.git
+    git clone https://github.com/ssylvis/dotfiles.git ~/dotfiles
+    ~/dotfiles/bin/install.sh
 
-    # Run install script
-    ./bootstrap-rc/bin/install.sh
+`install.sh` is safe to re-run. Run it again after adding a file, moving the repo, or pulling changes.
 
-### Adding Submodule
-    cd bootstrap-rc
-    git submodule add <github.com/module.git> </path/to/module>
+## Layout
+Files are grouped by tool and named as they appear in `$HOME`. `install.sh` links each one into `$HOME`, so `git/.gitconfig` becomes `~/.gitconfig`.
+
+| Directory | Contents |
+|-----------|----------|
+| `bin/` | `install.sh` and helper scripts |
+| `git/` | `.gitconfig`, `.git_alias` |
+| `ruby/` | `.irbrc`, `.pryrc`, `.ruby_alias` |
+| `shell/` | bash setup, `.inputrc`, `profile.d/` completion scripts, and other `*_alias` files |
+| `tmux/` | `.tmux.conf` |
+| `vim/` | `.vimrc`, `.ackrc`, `.vim/` with plugin submodules |
+| `Preferences/` | editor and terminal settings, imported by hand |
+
+`shell/.bashrc-private` and `shell/.bash_profile-private` are not linked. `install.sh` adds a `source` line for each to `~/.bashrc` and `~/.bash_profile`, which leaves room for machine-specific setup in those files.
+
+Every `~/.*_alias` file is loaded by `.bashrc-private`. To add aliases for a new tool, create `<dir>/.<tool>_alias` and re-run `install.sh`.
+
+### Adding a vim plugin
+    cd ~/dotfiles
+    git submodule add <github.com/module.git> vim/.vim/bundle/<name>
 
 ## General Setup
 See [macOS](#macos-setup) or [Linux](#linux-setup) for platform-specific instructions.
@@ -114,10 +130,9 @@ Using [vimdiff](http://www.rosipov.com/blog/use-vimdiff-as-git-mergetool/) as a 
     git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
 
 ### Tmux
-Many Linux distos are on an older verison of tmux. Run `install_tmux.sh` to install the latest version of tmux.
+Many Linux distros are on an older version of tmux. Run `install_tmux.sh` to install the latest version of tmux.
 
-    cd bootstrap-rc/
-    ./bin/install_tmux.sh
+    ~/dotfiles/bin/install_tmux.sh
 
 ## Editors
 ### [Sublime Text](https://www.sublimetext.com/)
