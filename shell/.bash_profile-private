@@ -10,3 +10,6 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 # Load rbenv into shell
 [[ -x "$(command -v rbenv)" ]] && eval "$(rbenv init -)"
+
+# Claude Code: use a current bash when installed (macOS ships bash 3.2)
+[ -x /opt/homebrew/bin/bash ] && export CLAUDE_CODE_SHELL=/opt/homebrew/bin/bash
