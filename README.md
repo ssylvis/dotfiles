@@ -24,6 +24,8 @@ Files are grouped by tool and named as they appear in `$HOME`. `install.sh` link
 
 `shell/.bashrc-private` and `shell/.bash_profile-private` are not linked. `install.sh` adds a `source` line for each to `~/.bashrc` and `~/.bash_profile`, which leaves room for machine-specific setup in those files.
 
+`git/.gitconfig` is not linked either. `install.sh` makes `~/.gitconfig` a local file that includes it, so `git config --global` and other tools write to the local file instead of this repo. Put machine and work settings, such as a work email scoped with `[includeIf "gitdir:~/work/"]`, below the include.
+
 Each skill with a committed `SKILL.md` is linked into both `~/.claude/skills/<name>` and `~/.codex/skills/<name>`, and each committed Codex prompt into `~/.codex/prompts/`; uncommitted drafts are skipped until they are committed. Edits to a linked skill take effect immediately. Re-run `install.sh` after adding or renaming a skill.
 
 Every `~/.*_alias` file is loaded by `.bashrc-private`. To add aliases for a new tool, create `<dir>/.<tool>_alias` and re-run `install.sh`.

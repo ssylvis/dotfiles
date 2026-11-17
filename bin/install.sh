@@ -3,8 +3,9 @@
 # real files in the way are backed up, and rc source lines are never duplicated.
 #
 # Each tool directory holds files named as they appear in $HOME
-# (e.g. git/.gitconfig -> ~/.gitconfig). shell/*-private files are sourced
-# from ~/.bashrc and ~/.bash_profile rather than linked.
+# (e.g. tmux/.tmux.conf -> ~/.tmux.conf). shell/*-private files are sourced
+# from ~/.bashrc and ~/.bash_profile, and git/.gitconfig is included from
+# ~/.gitconfig, rather than linked. Those local files hold machine and work settings.
 set -euo pipefail
 
 # Repository root, wherever it is cloned
@@ -51,6 +52,24 @@ remove_dangling_links() {
   done
 }
 
+# Make ~/.gitconfig a local file whose first line includes this repo's base config.
+# Tools that write global git config (git config --global, credential helpers)
+# then edit the local file, never the repo, and local settings override the base.
+ensure_gitconfig() {
+  local rc="$HOME/.gitconfig" base="$DIR/git/.gitconfig" tmp
+  [ -L "$rc" ] && rm "$rc"  # replace a link from an older install
+  touch "$rc"
+  if git config --file "$rc" --get-all include.path | grep -qxF "$base"; then
+    return
+  elif git config --file "$rc" --get-all include.path | grep -q '/git/\.gitconfig$'; then
+    git config --file "$rc" --replace-all include.path "$base" '/git/\.gitconfig$'
+  else
+    tmp="$(mktemp)"
+    printf '# Base config from dotfiles; machine and work settings go below\n[include]\n  path = %s\n\n' "$base" > "$tmp"
+    cat "$rc" >> "$tmp" && mv "$tmp" "$rc" && chmod 644 "$rc"
+  fi
+}
+
 remove_dangling_links
 
 # Dotfiles from each tool directory
@@ -58,7 +77,7 @@ for tool in $TOOLS; do
   for file in "$DIR/$tool"/.[!.]*; do
     [ -e "$file" ] || continue
     case "$(basename "$file")" in
-      *-private) ;;  # sourced below, not linked
+      *-private|.gitconfig) ;;  # sourced or included below, not linked
       *) link "$file" ;;
     esac
   done
@@ -67,6 +86,9 @@ done
 # Shell
 ensure_source .bash_profile "$DIR/shell/.bash_profile-private"
 ensure_source .bashrc "$DIR/shell/.bashrc-private"
+
+# Git
+ensure_gitconfig
 
 # Skills: link each committed skill into Claude Code and Codex, so drafts
 # stay out of use until they are committed
