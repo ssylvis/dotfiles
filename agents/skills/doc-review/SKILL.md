@@ -11,7 +11,7 @@ A reviewer that never saw how a document was written catches what its author can
 
 - **Type:** design, spec, investigation or general. A calling skill names the type; otherwise infer it from the document's sections and confirm with the user if unclear.
 - **Ownership:** whether the user owns the document. On anyone else's document this skill only reports: no edits, no comments, no messages, unless the user asks for exactly that.
-- **Scope:** the whole document, or the sections the user names. For a spec, both REQ and PLAN together.
+- **Scope:** the whole document, or the sections the user names.
 
 ## 2. Brief a fresh reviewer
 
@@ -73,7 +73,7 @@ Offer to re-run the review after a substantial revision.
 3. Acceptance criteria or task acceptance that cannot be tested as written.
 4. Dependencies that are missing, circular, or contradicted by the task order.
 5. File paths, APIs or behaviors stated as fact with no sign they were verified.
-6. Scope in the PLAN that the REQ lists as a non-goal, and REQ scope the PLAN omits.
+6. Plan scope that the Requirements list as a non-goal, and required scope the Plan omits.
 7. Contradictions with the design document or its decision records, where the spec links one.
 
 ### Investigation
