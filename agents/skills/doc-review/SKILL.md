@@ -1,6 +1,6 @@
 ---
 name: doc-review
-description: Independently review a technical document (design proposal, implementation spec, investigation, or any other doc) with a fresh subagent that sees only the document, then verify each finding before acting. Fixes wording on the user's own documents and brings design gaps to the user; on anyone else's document it only reports. Use when the user asks to review a doc, and as the review step of skills that write documents.
+description: Independently review a technical document (design proposal, implementation spec, investigation, or any other doc) with a fresh subagent that sees only the document (and, for a spec, the design it links), then verify each finding before acting. Fixes wording on the user's own documents and brings design gaps to the user; on anyone else's document it only reports. Use when the user asks to review a doc, and as the review step of skills that write documents.
 ---
 
 # Independent document review
@@ -18,6 +18,7 @@ A reviewer that never saw how a document was written catches what its author can
 Start a subagent that receives only:
 
 - how to read the document (its location and the tool to read it with, or the text itself), with an instruction to read all of it and not to edit, comment on, or read anything else
+- for a spec that links a design, how to read the design too, as the reference the spec is checked against; the design itself is not under review
 - the check list for its type (below), asking for a short quote and the section for each finding
 - the instruction to label each finding **WORDING** (a clarity or consistency fix that does not change what the document promises) or **DESIGN** (a gap that would change goals, guarantees, limits, scope or risks)
 - the instruction to be specific and skeptical but not invent problems, and to answer "none" for an empty category
@@ -68,13 +69,14 @@ Offer to re-run the review after a substantial revision.
 
 ### Spec
 
-1. Acceptance criteria that name no goal, and goals with no acceptance criterion.
-2. Acceptance criteria that no task covers, and tasks that cover none.
-3. Acceptance criteria or task acceptance that cannot be tested as written.
+1. Requirements that name no goal, and goals with no requirement.
+2. Requirements that no task covers, and tasks that cover none.
+3. Requirements or task acceptance that cannot be tested as written.
 4. Dependencies that are missing, circular, or contradicted by the task order.
 5. File paths, APIs or behaviors stated as fact with no sign they were verified.
-6. Plan scope that the Requirements list as a non-goal, and required scope the Plan omits.
+6. Plan scope that the Objective lists as out of scope, and required scope the Plan omits.
 7. Contradictions with the design document or its decision records, where the spec links one.
+8. Goals, decisions or background restated from the design instead of cited.
 
 ### Investigation
 
