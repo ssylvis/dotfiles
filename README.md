@@ -13,7 +13,7 @@ Files are grouped by tool and named as they appear in `$HOME`. `install.sh` link
 | Directory | Contents |
 |-----------|----------|
 | `bin/` | `install.sh` and helper scripts |
-| `claude/` | Claude Code skills (`claude/skills/<name>/SKILL.md`) |
+| `agents/` | Agent skills for Claude Code and Codex (`agents/skills/<name>/SKILL.md`) |
 | `codex/` | Codex prompts (`codex/prompts/<name>.md`, run as `/<name>`) |
 | `git/` | `.gitconfig`, `.git_alias` |
 | `ruby/` | `.irbrc`, `.pryrc`, `.ruby_alias` |
@@ -24,7 +24,7 @@ Files are grouped by tool and named as they appear in `$HOME`. `install.sh` link
 
 `shell/.bashrc-private` and `shell/.bash_profile-private` are not linked. `install.sh` adds a `source` line for each to `~/.bashrc` and `~/.bash_profile`, which leaves room for machine-specific setup in those files.
 
-Each Claude skill with a committed `SKILL.md` is linked into `~/.claude/skills/<name>`, and each committed Codex prompt into `~/.codex/prompts/`; uncommitted drafts are skipped until they are committed. Edits to a linked skill take effect immediately. Re-run `install.sh` after adding or renaming a skill.
+Each skill with a committed `SKILL.md` is linked into both `~/.claude/skills/<name>` and `~/.codex/skills/<name>`, and each committed Codex prompt into `~/.codex/prompts/`; uncommitted drafts are skipped until they are committed. Edits to a linked skill take effect immediately. Re-run `install.sh` after adding or renaming a skill.
 
 Every `~/.*_alias` file is loaded by `.bashrc-private`. To add aliases for a new tool, create `<dir>/.<tool>_alias` and re-run `install.sh`.
 

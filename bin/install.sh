@@ -68,13 +68,15 @@ done
 ensure_source .bash_profile "$DIR/shell/.bash_profile-private"
 ensure_source .bashrc "$DIR/shell/.bashrc-private"
 
-# Claude skills: link each committed skill into ~/.claude/skills, so drafts
+# Skills: link each committed skill into Claude Code and Codex, so drafts
 # stay out of use until they are committed
-mkdir -p "$HOME/.claude/skills"
-remove_dangling_links "$HOME/.claude/skills/*"
-git -C "$DIR" ls-files 'claude/skills/*/SKILL.md' | while read -r skill; do
-  name="$(basename "$(dirname "$skill")")"
-  link "$DIR/claude/skills/$name" "$HOME/.claude/skills/$name"
+for skills_dir in "$HOME/.claude/skills" "$HOME/.codex/skills"; do
+  mkdir -p "$skills_dir"
+  remove_dangling_links "$skills_dir/*"
+  git -C "$DIR" ls-files 'agents/skills/*/SKILL.md' | while read -r skill; do
+    name="$(basename "$(dirname "$skill")")"
+    link "$DIR/agents/skills/$name" "$skills_dir/$name"
+  done
 done
 
 # Codex prompts: link each committed prompt into ~/.codex/prompts
