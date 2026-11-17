@@ -31,7 +31,7 @@ Numbered items use a one-letter ID with no hyphen: goals G1, open questions Q1, 
 6. **Approach:** the recommended option at the level needed to agree on it: components, the main flow, and interfaces or contracts only where they decide something. Leave field-level detail and task breakdown to `tech-spec`.
 7. **Risks:** only the few that could sink the design: an assumption that might prove false, a dependency or owner that might not come through, a cost or scale limit that might not hold. Each states what would go wrong for the design as a whole and how it is mitigated or detected early. Ordinary failure modes the Approach already handles (retries, caps, non-fatal calls) belong in the Approach; implementation-level hazards belong in `tech-spec`.
 8. **Open questions:** a bulleted list with IDs Q1, Q2, …, each saying what it blocks, e.g. "- **Q3:** …". Body text cross-references them by ID ("see Q3").
-9. **Decisions:** ADRs with IDs D1, D2, …, newest last (format below). Open the section with one line saying so, since D is less familiar than ADR.
+9. **Decisions:** ADRs with IDs D1, D2, …, newest last (format below), with no introductory line.
 10. **Sources:** the code, PRs, threads and docs the evidence came from.
 
 ### ADR format
