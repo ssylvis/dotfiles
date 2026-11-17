@@ -77,6 +77,7 @@ Offer to re-run the review after a substantial revision.
 6. Plan scope that the Objective lists as out of scope, and required scope the Plan omits.
 7. Contradictions with the design document or its decision records, where the spec links one.
 8. Goals, decisions or background restated from the design instead of cited.
+9. Choices that change what the system does or promises (who can use it, limits, what is counted or alerted on) made in the spec instead of recorded as a design decision.
 
 ### Investigation
 
