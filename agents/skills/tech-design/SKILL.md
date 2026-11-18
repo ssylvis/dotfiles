@@ -20,7 +20,7 @@ Numbered items use a one-letter ID with no hyphen: goals G1, open questions Q1, 
    ```
 2. **Header line:** author, created date, status. Status is one of:
    - **Draft:** being framed or decided in passes 1 and 2.
-   - **Ready:** the user has said the approach is decided, and no open question blocks building it. If one does, point it out before changing the status. Then suggest `tech-spec`, and add the spec's link once it exists.
+   - **Ready:** every Approach section is Approved, and no open question blocks building it. If one does, point it out before changing the status. Then suggest `tech-spec`, and add the spec's link once it exists.
    - **Superseded:** replaced by a later design, linked from the block quote (`> **Superseded by:** …`).
 
    Change the status only when the user says so.
@@ -28,7 +28,11 @@ Numbered items use a one-letter ID with no hyphen: goals G1, open questions Q1, 
    - **Goals and constraints** (subsection): a bulleted list with IDs G1, G2, …, each a bold ID and label plus one sentence, e.g. "- **G3. Non-blocking:** a failed call never fails the service's CI." These are the criteria options are judged against, not the detailed requirements a spec adds. Refer to them by ID ("G3").
 4. **Current state:** the existing system, platform behavior and precedents the design can rely on, each stated as fact with its source. Mark anything inferred rather than verified.
 5. **Options considered:** each with a short name, a one-sentence description, and bullets for the tradeoffs that matter here (change required, latency, cost, effort, drawbacks), judged against the goals by ID. Exactly one option is recommended; a phased answer (one for a prototype, another after) is fine when stated. Rejected options say why in one line.
-6. **Approach:** the recommended option at the level needed to agree on it: components, the main flow, and interfaces or contracts only where they decide something. Leave field-level detail and task breakdown to `tech-spec`.
+6. **Approach:** the recommended option at the level needed to agree on it: components, the main flow, and interfaces or contracts only where they decide something. Leave field-level detail and task breakdown to `tech-spec`. Open with a short overview, then one subsection per part of the design, each reviewed and approved on its own. Directly under each subsection's heading, a status line:
+   - `**Status:** Proposed · open: Q5, Q6` while it is still being discussed, naming the open questions that block it (or "open: none" when it only awaits review).
+   - `**Status:** Approved (D5, D6)` once the user accepts it, citing the decisions that settled it, or `**Status:** Approved` when none was needed.
+
+   Keep the status out of the heading so links to the section survive the change.
 7. **Risks:** only the few that could sink the design: an assumption that might prove false, a dependency or owner that might not come through, a cost or scale limit that might not hold. Each states what would go wrong for the design as a whole and how it is mitigated or detected early. Ordinary failure modes the Approach already handles (retries, caps, non-fatal calls) belong in the Approach; implementation-level hazards belong in `tech-spec`.
 8. **Open questions:** a bulleted list with IDs Q1, Q2, …, each saying what it blocks, e.g. "- **Q3:** …". Body text cross-references them by ID ("see Q3").
 9. **Decisions:** ADRs with IDs D1, D2, …, newest last (format below), with no introductory line.
@@ -64,8 +68,8 @@ An ADR records a decision once it is made, usually by answering an open question
 ### Pass 2: Decide
 
 5. Develop the options considered, judged against the goals. Recommend one.
-6. Write the Approach for the recommended option, then Risks and Open questions.
-7. Discuss with the user. As decisions settle, add ADRs and update the affected sections.
+6. Write the Approach for the recommended option, every subsection Proposed, then Risks and Open questions.
+7. Review the Approach with the user one subsection at a time. For each, settle its open questions: record each answer as an ADR, delete the question, and rewrite the subsection to match. Mark it Approved once the user accepts it. A finding that reopens an Approved subsection sets it back to Proposed with the new question.
 
 ### Independent review
 
@@ -86,4 +90,4 @@ Publish to the user's document tool if one is connected and the user wants it th
 The document is a snapshot of the current design, not a record of how it was reached; ADRs hold the decision trail.
 
 - When a finding changes the design, edit the affected text, and add a risk, open question or ADR as needed. Do not add dated narrative, event counts or "update:" paragraphs; keep that evidence in chat or the linked thread.
-- When an open question is answered, record a decision, delete the question, and point every reference to it at the new decision. Do not renumber the remaining questions or reuse the ID, so existing references stay valid.
+- When an open question is answered, record a decision, delete the question, and point every reference to it at the new decision, including the status lines of the Approach subsections it blocked. Do not renumber the remaining questions or reuse the ID, so existing references stay valid.

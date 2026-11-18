@@ -66,6 +66,7 @@ Offer to re-run the review after a substantial revision.
 6. Text written as history (dates of events, "after N attempts", progress narration) instead of the current design.
 7. Names specific to this team or system that the document doesn't explain. Terms common across the organization need no definition.
 8. Risks that are routine failure modes rather than threats that could sink the design, and design-level threats the risks miss.
+9. Approach sections whose status disagrees with the rest of the document: marked Approved while an open question still blocks them, marked Proposed when every question they name has been answered, or naming open questions or decisions that do not exist.
 
 ### Spec
 
